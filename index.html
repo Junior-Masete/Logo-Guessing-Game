@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess</title>
+    <style>
+        * {
+            margin: 0;
+        }
+
+        h1 {
+            font-family: sans-serif;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        input {
+            margin-bottom: 40px;
+            border: 1px solid #000;
+        }
+
+        .container {
+            margin: 0 auto;
+            background-color: rgb(103, 81, 124);
+            max-width: 600px;
+            margin-top: 50px;
+        }
+
+        button {
+            background-color: rgb(217, 88, 166);
+            color: black;
+            border-radius: 2px;
+            padding: 3px 5px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .idClass {
+            width: 100%;
+            text-align: center;
+        }
+
+        #btnId {
+           /* margin-bottom: 10px;*/
+            padding: 20px 30px;
+            margin-bottom: 20px;
+        }
+
+        .forJoin{
+            text-align: center;
+        }
+
+        #gameId {
+            text-align: center;
+        }
+
+
+        #divplayers{
+            text-align: center;
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GUESS LOGO</h1>
+
+        
+        <div id="gameId">
+            <!-------Display Game Id---------->
+        </div>
+        <div class="idClass">
+            <button id="btnId">Generate ID</button>
+        </div>
+        
+        
+        <div class="forJoin">
+            <input type="text" id="txtUser" placeholder="Enter Username">
+            <input type="text" id="txtGameId" placeholder="Game ID">
+            <button id="joinBtn">Join Game</button>
+        </div>
+        
+        <div id="divplayers">
+            <!---------Display Players------------>
+            
+        </div>
+    </div>
+
+
+    <script>
+        let clientId = null;
+        let gameId = null;
+        let ws = new WebSocket("ws:localhost:9090");
+
+        const btnCreate = document.getElementById('btnId');
+        const btnJoin = document.getElementById('joinBtn');
+        const gameIdTxt = document.getElementById('txtGameId');
+        const players = document.getElementById("divplayers");
+        const forId = document.getElementById('gameId'); //Game ID
+        const txtUser = document.getElementById('txtUser'); //username
+        const joinDiv = document.querySelector('.forJoin');
+
+
+        //Event for creating a game
+        btnCreate.addEventListener("click", e => {
+            console.log("clicked");
+
+            const payLoad = {
+                "method": "create",
+                "clientId": clientId
+            }
+
+            ws.send(JSON.stringify(payLoad));
+        });
+
+        //Event for joining a game
+        btnJoin.addEventListener("click", e => {
+            if(gameId === null){
+                gameId = gameIdTxt.value;
+            }
+
+            const aUser = txtUser.value;
+            console.log(aUser + " Printed from event listener");
+
+            const payLoad = {
+                "method": "join",
+                "clientId": clientId,
+                "user": aUser,
+                "gameId": gameId
+            }
+
+            ws.send(JSON.stringify(payLoad));
+        });
+
+        
+        ws.onmessage = message => {
+            //message.data
+            const response = JSON.parse(message.data);
+            //console.log(response);
+            //connect
+            if(response.method === "connect"){
+                clientId = response.clientId;
+                console.log("Client Id is Set successfully: " + clientId);
+            }
+
+            //create
+            if (response.method === "create"){
+                gameId = response.game.id;
+                const txt = document.createTextNode('Game ID: '+ gameId);
+                forId.appendChild(txt);
+                console.log("game successfully created with id " + response.game.id + " with ")  
+            }
+
+            //join respond
+            if(response.method === "join"){
+                const game = response.game;
+
+                while(players.firstChild){
+                        players.removeChild(players.firstChild)
+                    }
+
+                if(game.clients.length == 2){
+
+                    function leaveP(){
+                    var obj = {
+                            "apikey": 56,
+                            "type": "GetRandomBrands"
+                        }
+
+                        let post = JSON.stringify(obj);
+
+                        const xhr = new XMLHttpRequest();
+                        xhr.open("POST", "https://u19089415:@Manase8354@wheatley.cs.up.ac.za/u19089415/GetRandomBrands/api.php", true);
+                        xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
+                        xhr.send(post);
+
+                        xhr.onreadystatechange  = function() {
+                            if(this.readyState == 4 && this.status){
+                                var jdata  = JSON.parse(xhr.responseText);
+                                var jdata = JSON.parse(xhr.responseText);
+                                console.log(jdata);
+
+                                var i = 0;
+
+                                function changeImg() {
+                            
+                                var cars = document.querySelector('.idClass');
+                                
+                                
+                                cars.innerHTML = '<img src="' + jdata.data[i].image + '" width="300px" />'+
+                                                '<br/><input type="text" placeholder="ENTER LOGO NAME">';
+                                
+                            
+                                i++;
+                                
+                                
+                                if (i >= jdata.data.length) {
+                                    return;
+                                    //i = 0;
+                                }
+                                
+                                
+                                setTimeout(changeImg, 5000);
+                                }
+
+                                changeImg();
+
+                            
+                                
+                                
+                            }
+                        }
+
+
+
+                        
+
+
+
+                        //window.location.href='COS216/Homework/ajax.html';
+                        console.log("Ajax here");
+                    }
+                    forId.remove();
+                    btnCreate.remove();
+                    joinDiv.remove();
+
+                    const parentElement = document.querySelector('.idClass');
+                    const buttonS = document.createElement('button');
+
+                    buttonS.setAttribute('id', 'myButton');
+                    buttonS.setAttribute('class', 'my-button-class');
+                    buttonS.setAttribute('type', 'button');
+                    //buttonS.setAttribute('onclick',leaveP);
+                    
+
+                    buttonS.style.backgroundColor = "#88D18A";
+                    //button.style.marginBottom = "10px";
+
+                    buttonS.textContent = 'START';
+                    buttonS.addEventListener('click', leaveP);
+
+                    // Step 5: Append the button to the parent element
+                    parentElement.appendChild(buttonS);
+                    
+
+                }
+
+                game.clients.forEach(c => {
+                    
+                    const d = document.createElement("p");
+                    d.style.width = "200px";
+                    d.style.margin = "0 auto";
+                    d.style.background = c.color;
+                    d.textContent = c.user;
+                    players.appendChild(d);
+
+                });
+
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess</title>
+    <style>
+        * {
+            margin: 0;
+        }
+
+        h1 {
+            font-family: sans-serif;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        input {
+            margin-bottom: 40px;
+            border: 1px solid #000;
+        }
+
+        .container {
+            margin: 0 auto;
+            text-align: center;
+            background-color: rgb(103, 81, 124);
+            max-width: 600px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>GUESS LOGO</h1>
+        <p>You have 5 seconds</p>
+        <div class="feature">
+        </div>
+    
+
+    </div>
+
+    <script>
+               
+        var obj = {
+            "apikey": 56,
+            "type": "GetRandomBrands"
+        }
+
+        let post = JSON.stringify(obj);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://u19089415:@Manase8354@wheatley.cs.up.ac.za/u19089415/GetRandomBrands/api.php", true);
+        xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
+        xhr.send(post);
+
+        xhr.onreadystatechange  = function() {
+            if(this.readyState == 4 && this.status){
+                var jdata  = JSON.parse(xhr.responseText);
+                var jdata = JSON.parse(xhr.responseText);
+                console.log(jdata);
+
+                var i = 0;
+
+                function changeImg() {
+              
+                var cars = document.querySelector('.feature');
+                
+                
+                cars.innerHTML = '<img src="' + jdata.data[i].image + '" width="300px" />'+
+                                '<br/><input type="text" placeholder="ENTER LOGO NAME">';
+                
+             
+                i++;
+                
+                
+                if (i >= jdata.data.length) {
+                    return;
+                    //i = 0;
+                }
+                
+                
+                setTimeout(changeImg, 5000);
+                }
+
+                changeImg();
+
+             
+                
+                
+            }
+        }
+        
+
+    </script>
+</body>
+</html>
