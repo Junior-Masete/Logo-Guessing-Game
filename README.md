@@ -12,3 +12,5 @@ To run game:
     -then enter port number between 1024 - 4915 to listen to.
     Commands for the game
         -LIST: list the connections on the server
+        -KILL: to kill a connection of a user
+        -QUIT: to disconnect both users in the game
